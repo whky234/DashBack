@@ -22,7 +22,7 @@ DbConnect();
 
 app.get('/',(req,res)=>{
   console.log('hello');
-  res.send('Hello World');
+  res.send('Hello World run api');
 
 });
 
