@@ -2,7 +2,7 @@ const express=require('express');
 const app=express();
 const dotenv=require('dotenv')
 dotenv.config();
-const Port=process.env.PORT
+const Port=process.env.PORT ||3000
 
 const authroutes=require('./Routes/Authroutes');
 const userRoutes=require('./Routes/userroutes');
@@ -36,5 +36,5 @@ app.use('/api/profile', profileRoutes);
 
 
 app.listen(Port,()=>{
-    console.log('server is running');
+    console.log('server is running at port 3000}');
 })

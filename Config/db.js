@@ -1,9 +1,11 @@
-const moongose=require('mongoose')
+const mongoose=require('mongoose')
+require('dotenv').config(); // Ensure this is the very first line
 
+console.log("Mongo URI:", process.env.MONGO_URI);
 
 const Connect=async()=>{
     try{
-        await moongose.connect(process.env.MONGO_URL,{
+        await mongoose.connect(process.env.MONGO_URI,{
            
         })
 
