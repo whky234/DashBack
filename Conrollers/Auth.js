@@ -76,9 +76,9 @@ const login=async(req,res)=>{
             token:generateToken(user._id)
     
         });
-    }catch(err){
-        res.status(500).json({ message: "Server Error", err });
-        console.log(err)
+    }catch(error){
+      console.error('Login Error:', error);
+      res.status(500).json({ message: 'Something went wrong during login.' });
 
     }
 }
