@@ -32,7 +32,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']  }));
 
 
-
 DbConnect();
 app.use((req, res, next) => {
   console.log('Incoming request from origin:', req.headers.origin);
