@@ -14,7 +14,7 @@ app.use(express.json());  // ✅ This allows JSON parsing
 const cors = require("cors");
 
 const allowedOrigins = [
-  // 'http://localhost:5173',
+  'http://localhost:5173',
   'https://imaginative-empanada-3e372f.netlify.app'
 ];
 
