@@ -13,18 +13,23 @@ const DbConnect=require('./Config/db');
 app.use(express.json());  // ✅ This allows JSON parsing
 const cors = require("cors");
 
-const allowedOrigin = "https://imaginative-empanada-3e372f.netlify.app";
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://imaginative-empanada-3e372f.netlify.app'
+];
 
 app.use(cors({
-  origin: allowedOrigin,
+  origin: function (origin, callback) {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Must come before routes
-app.options("*", cors()); // Preflight support for all routes
-
+  allowedHeaders: ['Content-Type', 'Authorization']  }));
 
 
 
