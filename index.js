@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 app.get('/',(req,res)=>{
   console.log('hello');
-  res.send('Hello World run api');
+  res.send('Hello World run api master');
 
 });
 
