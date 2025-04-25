@@ -322,12 +322,14 @@ const Adduser = async (req, res) => {
       }
   
       res.status(200).json({
+        message: "User add successfully",
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
         status: user.status,
       });
+      
     } catch (err) {
       console.error("Error in Adduser:", err);
       res.status(500).json({ message: "Server side error", err });
