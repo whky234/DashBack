@@ -301,10 +301,12 @@ const Adduser = async (req, res) => {
       });
   
       // Send an email to the user with the token
-      const resetBaseUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://imaginative-empanada-3e372f.netlify.app"
-        : "http://localhost:5173";
+      // const resetBaseUrl =
+      // process.env.NODE_ENV === "production"
+      //   ? "https://imaginative-empanada-3e372f.netlify.app"
+      //   : "http://localhost:5173";
+
+      const resetBaseUrl="https://productsdash.netlify.app"
     
     const resetUrl = `${resetBaseUrl}/set-password?token=${token}`;
           const message = `You have been added to the system. Please set your password by clicking the link below:\n\n${resetUrl}`;
