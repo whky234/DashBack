@@ -13,23 +13,14 @@ const DbConnect=require('./Config/db');
 app.use(express.json());  // ✅ This allows JSON parsing
 const cors = require("cors");
 
-const allowedOrigins = [
-  'http://localhost:5173',
-];
+// Enable CORS for your frontend domain
+const corsOptions = {
+  origin: 'https://productsdash.netlify.app',  // Your Netlify app URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Methods you want to allow
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers you want to allow
+};
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin like mobile apps or curl
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']  }));
-
+app.use(cors(corsOptions));
 
 DbConnect();
 app.use((req, res, next) => {
