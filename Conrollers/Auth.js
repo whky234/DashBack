@@ -34,6 +34,7 @@ const registerUser = async (req, res) => {
     const user = await User.create({ name, email, password, role ,status});
 
     res.status(200).json({
+      message:'User Register successfully',
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -95,7 +96,7 @@ const setnewpassword=async(req,res)=>{
       return  res.status(400).json({message:'user not found'});
     }
 
-    const isMatch=await bcrypt.compare(currentPassword,user.password);
+    const isMatch=bcrypt.compare(currentPassword, user.password);
 
     if(!isMatch){
       return  res.status(401).json({message:'password not match'});
@@ -132,32 +133,31 @@ const currentuser=req.user.id
 }
 }
 
-const DeleteUser=async(req,res)=>{
-    const {id}=req.params
+const DeleteUser = async (req, res) => {
+  const { id } = req.params;
 
-    try{
-        const user=await User.findById(id);
+  try {
+    const user = await User.findById(id);
 
-        if(!user){
-            return  res.status(401).json({message:'users not found'})
-
-        }
-
-        if(user.role==='admin'){
-            const admincount=await User.countDocuments({role:'admin'})
-            if(admincount===1){
-                return  res.status(403).json({message:'cannot delete only Admin'})
-            }
-        }
-
-        await User.findByIdAndDelete(id);
-          res.status(200).json({message:'user deleted successfully'})
-
-    }catch(err){
-      res.status(500).json({message:'server side error',err})
-
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-}
+
+    console.log("Fetched user:", user); // Debug
+
+    if (user.role === 'admin') {
+      return res.status(403).json({ message: 'Admin users cannot be deleted' });
+    }
+
+    await User.findByIdAndDelete(id);
+    return res.status(200).json({ message: 'User deleted successfully' });
+
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
 
 const EditUser=async(req,res)=>{
     const {id}=req.params;
@@ -178,6 +178,11 @@ const EditUser=async(req,res)=>{
             }
         }
 
+        // Prevent one admin from changing another admin's status
+      if (user.role === 'admin' && req.user?.role === 'admin') {
+        return res.status(403).json({ message: 'Admins cannot change the data of other admins' });
+    }
+
 
         user.name=name||user.name;
         user.email=email||user.email;
@@ -196,40 +201,42 @@ const EditUser=async(req,res)=>{
     }
 }
 
-const changeStatus=async(req,res)=>{
-    const {id}=req.params;
-    const {status}=req.body;
+const changeStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
 
-    try {
+  try {
+      const user = await User.findById(id);
 
-        const user=await User.findById(id);
-    
-        if(!user){
-            return  res.status(401).json({message:'users not found'})
-    
-        }
-    
-        if(user.role==='admin' ){
-            const admincount=await User.countDocuments({role:'admin'})
-            if(admincount===1){
-                return  res.status(403).json({message:'cannot change only Admin'})
-            }
-        }
-    
-        user.status=status;
-        await user.save();
-        res.status(200).json({message:'user status update successfully',user})
-    
-    
-        
-     } catch (err) {
-        res.status(500).json({message:'server side error',err})
-        console.log(err)
-    
-     }
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
 
-    
-}
+      // Prevent one admin from changing another admin's status
+      if (user.role === 'admin' && req.user?.role === 'admin') {
+          return res.status(403).json({ message: 'Admins cannot change the status of other admins' });
+      }
+
+      // Optional: Prevent changing status of the last remaining admin
+      if (user.role === 'admin') {
+          const adminCount = await User.countDocuments({ role: 'admin' });
+          if (adminCount === 1) {
+              return res.status(403).json({ message: 'Cannot change status of the only admin' });
+          }
+      }
+
+      user.status = status;
+      await user.save();
+
+      res.status(200).json({ message: 'User status updated successfully', user });
+
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server side error', error: err.message });
+  }
+};
+
+
 
 
 const changeUserRole = async (req, res) => {
